@@ -3,6 +3,7 @@ package sia.trafficanalyser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     private UserDetailsService userDetailsService;
@@ -22,6 +24,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .cors().disable()
+                .csrf().disable()
                 .formLogin()
                 .loginPage("/login")
 
@@ -30,15 +34,18 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/")
 
                 // Make H2-Console non-secured; for debug purposes
-                .and()
-                .csrf()
-                .ignoringAntMatchers("/h2-console/**")
+                //.and()
+                //.csrf().disable()
+                //.ignoringAntMatchers("/h2-console/**")
 
                 // Allow pages to be loaded in frames from the same origin; needed for H2-Console
                 .and()
                 .headers()
                 .frameOptions()
                 .sameOrigin()
+
+                .and().authorizeRequests()
+                .antMatchers("/", "/login", "/register").permitAll()
 
                 .and()
                 .build();
