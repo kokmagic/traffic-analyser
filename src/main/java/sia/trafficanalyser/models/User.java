@@ -30,6 +30,7 @@ public class User {
     @NotBlank
     @Size(max = 20)
     private String phoneNumber;
+    private String resetPasswordToken;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "user_roles",
@@ -45,6 +46,7 @@ public class User {
         this.fullname = fullname;
         this.organisation = organisation;
         this.phoneNumber = phoneNumber;
+        this.resetPasswordToken = null;
     }
     public Set<Role> getRoles() {
         return roles;
