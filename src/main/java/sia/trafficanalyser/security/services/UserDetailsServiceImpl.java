@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import sia.trafficanalyser.models.User;
 import sia.trafficanalyser.repository.UserRepository;
 
-import java.util.Optional;
-
 @Service
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
