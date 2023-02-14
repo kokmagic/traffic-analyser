@@ -6,11 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import sia.trafficanalyser.models.User;
+import org.springframework.web.bind.annotation.*;
+import sia.trafficanalyser.repository.models.User;
 import sia.trafficanalyser.payload.request.ForgotPasswordRequest;
 import sia.trafficanalyser.payload.request.ResetPasswordRequest;
 import sia.trafficanalyser.payload.response.MessageResponse;
@@ -20,6 +17,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/")
 public class ResetPasswordController {
@@ -35,7 +33,7 @@ public class ResetPasswordController {
         String token = RandomString.make(30);
         try {
             userDetailsService.updateResetPasswordToken(token, username);
-            String resetPasswordLink = "http://localhost:8080" + "/reset_password/" + token;
+            String resetPasswordLink = "http://localhost:8081" + "/reset_password/" + token;
             sendEmail(username, resetPasswordLink);
             return ResponseEntity
                     .ok()

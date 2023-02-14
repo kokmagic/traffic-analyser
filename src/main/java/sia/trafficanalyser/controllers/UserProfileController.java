@@ -3,7 +3,7 @@ package sia.trafficanalyser.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sia.trafficanalyser.models.User;
+import sia.trafficanalyser.repository.models.User;
 import sia.trafficanalyser.payload.response.MessageResponse;
 import sia.trafficanalyser.payload.response.UserProfileResponse;
 import sia.trafficanalyser.repository.UserRepository;

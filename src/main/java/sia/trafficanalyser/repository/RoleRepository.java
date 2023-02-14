@@ -2,8 +2,8 @@ package sia.trafficanalyser.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import sia.trafficanalyser.models.ERole;
-import sia.trafficanalyser.models.Role;
+import sia.trafficanalyser.repository.models.ERole;
+import sia.trafficanalyser.repository.models.Role;
 
 import java.util.Optional;
 

@@ -6,7 +6,7 @@ import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import sia.trafficanalyser.models.User;
+import sia.trafficanalyser.repository.models.User;
 
 import java.util.Collection;
 import java.util.List;

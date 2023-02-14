@@ -1,4 +1,4 @@
-package sia.trafficanalyser.models;
+package sia.trafficanalyser.repository.models;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +38,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_devices",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "device_id"))
+    private Set<Device> devices = new HashSet<>();
+
     public User() {
     }
     public User(String username, String password, String fullname, String organisation, String phoneNumber) {
@@ -55,4 +61,8 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+    public Set<Device> getDevices() { return devices; }
+
+    public void setDevices(Set<Device> devices) { this.devices = devices;}
 }

@@ -1,4 +1,4 @@
-package sia.trafficanalyser.models;
+package sia.trafficanalyser.repository.models;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sia.trafficanalyser.models.User;
+import sia.trafficanalyser.repository.models.User;
 import sia.trafficanalyser.repository.UserRepository;
 
 @Service
