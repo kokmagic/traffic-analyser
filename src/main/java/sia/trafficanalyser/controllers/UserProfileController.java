@@ -68,6 +68,6 @@ public class UserProfileController {
                     user.getPhoneNumber()));
         } else return ResponseEntity
                 .badRequest()
-                .body(new MessageResponse("Error: User with this id not found!"));
+                .body(new MessageResponse("Error: Invalid type to change!"));
     }
 }

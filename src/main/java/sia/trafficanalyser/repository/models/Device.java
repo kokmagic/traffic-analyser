@@ -25,15 +25,24 @@ public class Device {
 
     private String view;
 
+    private String focus;
+
+    private String fov;
+
+    private String brightness;
+
     public Device(){
 
     }
 
-    public Device(Long id, String key, String name, String mode, String signal, String view){
+    public Device (String key, String name, String mode, String signal, String view){
         this.key = key;
         this.name = name;
         this.mode = mode;
         this.signal = signal;
         this.view = view;
+        this.brightness = null;
+        this.fov = null;
+        this.focus = null;
     }
 }
