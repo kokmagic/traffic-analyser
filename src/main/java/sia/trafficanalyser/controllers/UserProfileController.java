@@ -3,10 +3,13 @@ package sia.trafficanalyser.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sia.trafficanalyser.payload.request.UserProfileRequest;
 import sia.trafficanalyser.repository.models.User;
 import sia.trafficanalyser.payload.response.MessageResponse;
 import sia.trafficanalyser.payload.response.UserProfileResponse;
 import sia.trafficanalyser.repository.UserRepository;
+import sia.trafficanalyser.security.jwt.AuthTokenFilter;
+import sia.trafficanalyser.security.jwt.JwtUtils;
 
 import java.util.Optional;
 
@@ -18,20 +21,25 @@ public class UserProfileController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    AuthTokenFilter authTokenFilter;
+
+    @Autowired
+    JwtUtils jwtUtils;
+
     @GetMapping("/getinfo")
-    public ResponseEntity<?> getUserProfile(@RequestParam Long id ) {
-        Optional<User> user = userRepository.findById(id);
-            if (user.isEmpty()) {
+    public ResponseEntity<?> getUserProfile(@RequestBody UserProfileRequest userProfileRequest ) {
+        User user = userRepository.findByUsername(userProfileRequest.getUsername());
+            if (user == null) {
                 return ResponseEntity
                         .badRequest()
                         .body(new MessageResponse("Error: User with this id not found!"));
         } else {
-                User user1 = user.get();
                 return ResponseEntity.ok(new UserProfileResponse(
-                        user1.getUsername(),
-                        user1.getFullname(),
-                        user1.getOrganisation(),
-                        user1.getPhoneNumber()));
+                        user.getUsername(),
+                        user.getFullname(),
+                        user.getOrganisation(),
+                        user.getPhoneNumber()));
             }
     }
 

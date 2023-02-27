@@ -38,7 +38,7 @@ public class DeviceController {
                 .badRequest()
                 .body(new MessageResponse("Error: Device with this key not found!"));
         User user1 = user.get();
-        Set<Device> devices = new HashSet<>();
+        Set<Device> devices = user1.getDevices();
         devices.add(device);
         user1.setDevices(devices);
         userRepository.save(user1);
@@ -88,9 +88,9 @@ public class DeviceController {
             }
             deviceRepository.save(device1);
             return ResponseEntity.ok(new DeviceParametersResponse(
-                    device1.getBrightness(),
                     device1.getFov(),
-                    device1.getFocus()));
+                    device1.getFocus(),
+                    device1.getBrightness()));
         } else return ResponseEntity
                 .badRequest()
                 .body(new MessageResponse("Error: Invalid type to change!"));
@@ -104,8 +104,8 @@ public class DeviceController {
                 .body(new MessageResponse("Error: Device with this id not found!"));
         Device device1 = device.get();
         return ResponseEntity.ok(new DeviceParametersResponse(
-                device1.getBrightness(),
                 device1.getFov(),
-                device1.getFocus()));
+                device1.getFocus(),
+                device1.getBrightness()));
     }
 }

@@ -11,8 +11,8 @@ public class DeviceParametersResponse {
     private String brightness;
 
     public DeviceParametersResponse(String fov, String focus, String brightness) {
-        this.focus = focus;
         this.fov = fov;
+        this.focus = focus;
         this.brightness = brightness;
     }
 }
