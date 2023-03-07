@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sia.trafficanalyser.payload.request.DeviceParametersRequest;
 import sia.trafficanalyser.payload.request.LinkRequest;
+import sia.trafficanalyser.payload.request.RegisterDeviceRequest;
+import sia.trafficanalyser.payload.request.ShowAllDevicesRequest;
 import sia.trafficanalyser.payload.response.DeviceParametersResponse;
 import sia.trafficanalyser.payload.response.MessageResponse;
 import sia.trafficanalyser.repository.DeviceRepository;
@@ -13,6 +15,7 @@ import sia.trafficanalyser.repository.models.Device;
 import sia.trafficanalyser.repository.models.User;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -97,15 +100,47 @@ public class DeviceController {
     }
 
     @GetMapping("/show_parameters")
-    public ResponseEntity<?> showParameters (@RequestParam Long id) { //отправялешь параметром айди камеры id
+    public ResponseEntity<?> showParameters (@RequestParam Long id, String username) { //отправялешь параметром айди камеры id и юзернейм
+        User user = userRepository.findByUsername(username);
         Optional<Device> device = deviceRepository.findById(id);
         if (device.isEmpty()) return ResponseEntity
                 .badRequest()
                 .body(new MessageResponse("Error: Device with this id not found!"));
         Device device1 = device.get();
+        if (!user.getDevices().contains(device1)) return ResponseEntity
+                .badRequest()
+                .body(new MessageResponse("Error: this device doesn't belong to this user!"));
         return ResponseEntity.ok(new DeviceParametersResponse(
                 device1.getFov(),
                 device1.getFocus(),
                 device1.getBrightness()));
+    }
+
+    @GetMapping("/show_all")
+    public ResponseEntity<?> showAllDevices (@RequestBody ShowAllDevicesRequest allDevicesRequest) {
+        User user = userRepository.findByUsername(allDevicesRequest.getUsername());
+        if (user == null) return ResponseEntity
+                .badRequest()
+                .body(new MessageResponse("Error: User with this id not found!"));
+        List<Device> devices = deviceRepository.findAll();
+        return ResponseEntity.ok(devices);
+    }
+
+    @PostMapping("/register_device")
+    public ResponseEntity<?> registerDevice (@RequestBody RegisterDeviceRequest registerDeviceRequest) {
+        String key = registerDeviceRequest.getKey();
+        String name = registerDeviceRequest.getName();
+        if (key == null || name == null) return ResponseEntity
+                .badRequest()
+                .body(new MessageResponse("Error: name and key of device must not be null!"));
+        Device device = new Device();
+        device.setKey(key);
+        device.setName(name);
+        if (deviceRepository.existsByKey(key) || deviceRepository.existsByName(name)) return
+                ResponseEntity
+                        .badRequest()
+                        .body(new MessageResponse("Error: device with this key or name already exists!"));
+        deviceRepository.save(device);
+        return ResponseEntity.ok(new MessageResponse("Device registered successfully!"));
     }
 }

@@ -56,6 +56,9 @@ public class WebSecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/password/**").permitAll()
+                .antMatchers("/api/device/show_all").hasRole("ADMIN")
+                .antMatchers("/api/device/register_device").hasRole("ADMIN")
                 //.antMatchers("/api/**").permitAll()
                 .anyRequest().authenticated();
 

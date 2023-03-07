@@ -19,7 +19,7 @@ import java.io.UnsupportedEncodingException;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api/password")
 public class ResetPasswordController {
     @Autowired
     private JavaMailSender mailSender;
@@ -27,7 +27,7 @@ public class ResetPasswordController {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
-    @PostMapping("/forgot_password")
+    @PostMapping("/forgot")
     public ResponseEntity<?> processForgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         String username = forgotPasswordRequest.getUsername();
         String token = RandomString.make(30);
@@ -75,7 +75,7 @@ public class ResetPasswordController {
         mailSender.send(message);
     }
 
-    @PostMapping("/reset_password")
+    @PostMapping("/reset")
     public ResponseEntity<?> processResetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         String token = resetPasswordRequest.getToken();
         String password = resetPasswordRequest.getNewPassword();
