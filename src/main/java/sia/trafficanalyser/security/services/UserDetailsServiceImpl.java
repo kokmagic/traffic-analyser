@@ -7,8 +7,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sia.trafficanalyser.repository.models.ERole;
+import sia.trafficanalyser.repository.models.Role;
 import sia.trafficanalyser.repository.models.User;
 import sia.trafficanalyser.repository.UserRepository;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -47,5 +52,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         user.setResetPasswordToken(null);
         userRepository.save(user);
+    }
+
+    public Boolean isAdmin(User user) {
+        Set<Role> roles = new HashSet<>(user.getRoles());
+        for(Role role : roles) {
+            if (role.getName() == ERole.ROLE_ADMIN) return true;
+        }
+        return false;
     }
 }

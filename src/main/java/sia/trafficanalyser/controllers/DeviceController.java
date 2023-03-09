@@ -12,12 +12,16 @@ import sia.trafficanalyser.payload.response.MessageResponse;
 import sia.trafficanalyser.repository.DeviceRepository;
 import sia.trafficanalyser.repository.UserRepository;
 import sia.trafficanalyser.repository.models.Device;
+import sia.trafficanalyser.repository.models.Role;
 import sia.trafficanalyser.repository.models.User;
+import sia.trafficanalyser.security.services.UserDetailsServiceImpl;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import static sia.trafficanalyser.repository.models.ERole.ROLE_ADMIN;
 
 @RestController
 @CrossOrigin
@@ -28,6 +32,8 @@ public class DeviceController {
     DeviceRepository deviceRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
 
     @PostMapping("/link")
     public ResponseEntity<?> linkDevice(@RequestBody LinkRequest linkRequest) {
@@ -107,7 +113,7 @@ public class DeviceController {
                 .badRequest()
                 .body(new MessageResponse("Error: Device with this id not found!"));
         Device device1 = device.get();
-        if (!user.getDevices().contains(device1) && !user.getRoles().contains("admin")) return ResponseEntity
+        if (!user.getDevices().contains(device1) && !userDetailsService.isAdmin(user)) return ResponseEntity
                 .badRequest()
                 .body(new MessageResponse("Error: this device doesn't belong to this user!"));
         return ResponseEntity.ok(new DeviceParametersResponse(
