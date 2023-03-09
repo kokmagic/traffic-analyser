@@ -107,7 +107,7 @@ public class DeviceController {
                 .badRequest()
                 .body(new MessageResponse("Error: Device with this id not found!"));
         Device device1 = device.get();
-        if (!user.getDevices().contains(device1)) return ResponseEntity
+        if (!user.getDevices().contains(device1) && !user.getRoles().contains("admin")) return ResponseEntity
                 .badRequest()
                 .body(new MessageResponse("Error: this device doesn't belong to this user!"));
         return ResponseEntity.ok(new DeviceParametersResponse(
@@ -117,8 +117,8 @@ public class DeviceController {
     }
 
     @GetMapping("/show_all")
-    public ResponseEntity<?> showAllDevices (@RequestBody ShowAllDevicesRequest allDevicesRequest) {
-        User user = userRepository.findByUsername(allDevicesRequest.getUsername());
+    public ResponseEntity<?> showAllDevices (@RequestParam String username) {
+        User user = userRepository.findByUsername(username);
         if (user == null) return ResponseEntity
                 .badRequest()
                 .body(new MessageResponse("Error: User with this id not found!"));
@@ -127,9 +127,7 @@ public class DeviceController {
     }
 
     @PostMapping("/register_device")
-    public ResponseEntity<?> registerDevice (@RequestBody RegisterDeviceRequest registerDeviceRequest) {
-        String key = registerDeviceRequest.getKey();
-        String name = registerDeviceRequest.getName();
+    public ResponseEntity<?> registerDevice (@RequestParam String key, String name) {
         if (key == null || name == null) return ResponseEntity
                 .badRequest()
                 .body(new MessageResponse("Error: name and key of device must not be null!"));
