@@ -127,7 +127,7 @@ public class DeviceController {
         User user = userRepository.findByUsername(username);
         if (user == null) return ResponseEntity
                 .badRequest()
-                .body(new MessageResponse("Error: User with this id not found!"));
+                .body(new MessageResponse("Error: User with this username not found!"));
         List<Device> devices = deviceRepository.findAll();
         return ResponseEntity.ok(devices);
     }
