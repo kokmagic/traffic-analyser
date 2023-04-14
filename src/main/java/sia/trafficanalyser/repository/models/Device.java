@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -31,6 +33,12 @@ public class Device {
 
     private String brightness;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "device_events",
+            joinColumns = @JoinColumn(name = "device_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    private Set<Event> events = new HashSet<>();
+
     public Device(){
 
     }
@@ -44,5 +52,13 @@ public class Device {
         this.brightness = null;
         this.fov = null;
         this.focus = null;
+    }
+
+    public Set<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Set<Event> events) {
+        this.events = events;
     }
 }
