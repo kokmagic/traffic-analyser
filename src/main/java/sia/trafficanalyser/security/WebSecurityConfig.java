@@ -59,6 +59,7 @@ public class WebSecurityConfig {
                 .antMatchers("/api/password/**").permitAll()
                 .antMatchers("/api/device/show_all").hasRole("ADMIN")
                 .antMatchers("/api/device/register_device").hasRole("ADMIN")
+                .antMatchers("/api/event/show_events").permitAll()
                 //.antMatchers("/api/**").permitAll()
                 .anyRequest().authenticated();
 

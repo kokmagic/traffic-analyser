@@ -5,23 +5,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sia.trafficanalyser.payload.request.DeviceParametersRequest;
 import sia.trafficanalyser.payload.request.LinkRequest;
-import sia.trafficanalyser.payload.request.RegisterDeviceRequest;
-import sia.trafficanalyser.payload.request.ShowAllDevicesRequest;
 import sia.trafficanalyser.payload.response.DeviceParametersResponse;
 import sia.trafficanalyser.payload.response.MessageResponse;
 import sia.trafficanalyser.repository.DeviceRepository;
 import sia.trafficanalyser.repository.UserRepository;
 import sia.trafficanalyser.repository.models.Device;
-import sia.trafficanalyser.repository.models.Role;
 import sia.trafficanalyser.repository.models.User;
 import sia.trafficanalyser.security.services.UserDetailsServiceImpl;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import static sia.trafficanalyser.repository.models.ERole.ROLE_ADMIN;
 
 @RestController
 @CrossOrigin
