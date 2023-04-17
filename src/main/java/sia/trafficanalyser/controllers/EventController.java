@@ -9,6 +9,7 @@ import sia.trafficanalyser.repository.EventRepository;
 import sia.trafficanalyser.repository.UserRepository;
 import sia.trafficanalyser.repository.models.Device;
 import sia.trafficanalyser.repository.models.Event;
+import sia.trafficanalyser.security.services.EventService;
 
 import java.util.Set;
 
@@ -25,6 +26,9 @@ public class EventController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    EventService eventService;
+
     @GetMapping("/show_events")
     public ResponseEntity<?> showEvents(@RequestParam String key) {
         Device device = deviceRepository.findByKey(key);
@@ -35,5 +39,20 @@ public class EventController {
         return ResponseEntity
                 .ok()
                 .body(events);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<?> filterEvents(@RequestParam int filterType, String type, String key) {
+        Device device = deviceRepository.findByKey(key);
+        if (device == null) return ResponseEntity
+                .badRequest()
+                .body(new MessageResponse("Error: Device with this key not found!"));
+        Set<Event> events = device.getEvents();
+        Set<Event> result;
+        if (filterType == 0) result = eventService.filterByEvent(type, events);
+        else result = eventService.filterByCar(type, events);
+        return ResponseEntity
+                .ok()
+                .body(result);
     }
 }
