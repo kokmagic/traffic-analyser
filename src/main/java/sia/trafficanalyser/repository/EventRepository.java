@@ -7,4 +7,6 @@ import sia.trafficanalyser.repository.models.Event;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
+
+
 }

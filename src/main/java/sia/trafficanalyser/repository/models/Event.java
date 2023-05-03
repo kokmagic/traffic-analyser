@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -16,9 +17,9 @@ public class Event {
 
     private String carId;
 
-    private String speed;
+    private Double speed;
 
-    private String time;
+    private LocalDateTime time;
 
     private String typeOfCar;
 
@@ -28,7 +29,7 @@ public class Event {
 
     }
 
-    public Event(String carId, String speed, String time, String typeOfCar, String typeOfEvent) {
+    public Event(String carId, Double speed, LocalDateTime time, String typeOfCar, String typeOfEvent) {
         this.carId = carId;
         this.speed = speed;
         this.time = time;
