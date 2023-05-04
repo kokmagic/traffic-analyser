@@ -39,19 +39,62 @@ public class EventService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Double> getAverageSpeedPerHour(LocalDate day) {
+    public List<Double> getAverageSpeedPerHour(LocalDate day, Long deviceId) {
         List<Double> result = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
             LocalDateTime from = LocalDateTime.of(day, LocalTime.of(i, 0));
             LocalDateTime to = from.plusHours(1);
 
             TypedQuery<Double> query = entityManager.createQuery(
-                    "SELECT AVG(e.speed) FROM Event e WHERE e.time BETWEEN :from AND :to", Double.class);
+                    "SELECT COALESCE(AVG(e.speed), 0.0) FROM Device d JOIN d.events e WHERE d.id = :deviceId AND e.time BETWEEN :from AND :to", Double.class);
+            query.setParameter("deviceId", deviceId);
             query.setParameter("from", from);
             query.setParameter("to", to);
 
-            Double averageSpeed = query.getSingleResult();
-            result.add(averageSpeed != null ? averageSpeed : 0.0);
+            Double averageSpeed = query.getResultList().stream().findFirst().orElse(0.0);
+            result.add(averageSpeed);
+        }
+        return result;
+    }
+
+    public List<Map<String, Integer>> getCarTypeCountsPerHour(LocalDate day, Long deviceId) {
+        List<Map<String, Integer>> result = new ArrayList<>();
+        for (int i = 0; i < 24; i++) {
+            LocalDateTime from = LocalDateTime.of(day, LocalTime.of(i, 0));
+            LocalDateTime to = from.plusHours(1);
+
+            TypedQuery<Object[]> query = entityManager.createQuery(
+                    "SELECT e.typeOfCar, COUNT(e) FROM Device d JOIN d.events e WHERE d.id = :deviceId AND e.time BETWEEN :from AND :to GROUP BY e.typeOfCar", Object[].class);
+            query.setParameter("deviceId", deviceId);
+            query.setParameter("from", from);
+            query.setParameter("to", to);
+
+            Map<String, Integer> carTypeCounts = new HashMap<>();
+            for (Object[] row : query.getResultList()) {
+                carTypeCounts.put((String) row[0], ((Number) row[1]).intValue());
+            }
+            result.add(carTypeCounts);
+        }
+        return result;
+    }
+
+    public List<Map<String, Integer>> getEventTypeCountsPerHour(LocalDate day, Long deviceId) {
+        List<Map<String, Integer>> result = new ArrayList<>();
+        for (int i = 0; i < 24; i++) {
+            LocalDateTime from = LocalDateTime.of(day, LocalTime.of(i, 0));
+            LocalDateTime to = from.plusHours(1);
+
+            TypedQuery<Object[]> query = entityManager.createQuery(
+                    "SELECT e.typeOfEvent, COUNT(e) FROM Device d JOIN d.events e WHERE d.id = :deviceId AND e.time BETWEEN :from AND :to GROUP BY e.typeOfEvent", Object[].class);
+            query.setParameter("deviceId", deviceId);
+            query.setParameter("from", from);
+            query.setParameter("to", to);
+
+            Map<String, Integer> eventTypeCounts = new HashMap<>();
+            for (Object[] row : query.getResultList()) {
+                eventTypeCounts.put((String) row[0], ((Number) row[1]).intValue());
+            }
+            result.add(eventTypeCounts);
         }
         return result;
     }

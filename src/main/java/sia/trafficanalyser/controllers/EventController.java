@@ -13,6 +13,7 @@ import sia.trafficanalyser.security.services.EventService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -59,8 +60,24 @@ public class EventController {
     }
 
     @GetMapping("/average_speed")
-    public ResponseEntity<?> getAverageSpeed(@RequestParam int year, int month, int day) {
-        List<Double> result = eventService.getAverageSpeedPerHour(LocalDate.of(year, month, day));
+    public ResponseEntity<?> getAverageSpeed(@RequestParam int year, int month, int day, long id) {
+        List<Double> result = eventService.getAverageSpeedPerHour(LocalDate.of(year, month, day), id);
+        return ResponseEntity
+                .ok()
+                .body(result);
+    }
+
+    @GetMapping("/type_of_car")
+    public ResponseEntity<?> getTypeOfCar(@RequestParam int year, int month, int day, long id) {
+        List<Map<String, Integer>> result = eventService.getCarTypeCountsPerHour(LocalDate.of(year, month, day), id);
+        return ResponseEntity
+                .ok()
+                .body(result);
+    }
+
+    @GetMapping("/type_of_event")
+    public ResponseEntity<?> getTypeOfEvent(@RequestParam int year, int month, int day, long id) {
+        List<Map<String, Integer>> result = eventService.getEventTypeCountsPerHour(LocalDate.of(year, month, day), id);
         return ResponseEntity
                 .ok()
                 .body(result);
