@@ -14,6 +14,7 @@ import sia.trafficanalyser.security.services.EventService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -33,12 +34,13 @@ public class EventController {
     EventService eventService;
 
     @GetMapping("/show_events")
-    public ResponseEntity<?> showEvents(@RequestParam String key) {
-        Device device = deviceRepository.findByKey(key);
-        if (device == null) return ResponseEntity
+    public ResponseEntity<?> showEvents(@RequestParam Long id) {
+        Optional<Device> device = deviceRepository.findById(id);
+        if (device.isEmpty()) return ResponseEntity
                 .badRequest()
-                .body(new MessageResponse("Error: Device with this key not found!"));
-        Set<Event> events = device.getEvents();
+                .body(new MessageResponse("Error: Device with this id not found!"));
+        Device device1 = device.get();
+        Set<Event> events = device1.getEvents();
         return ResponseEntity
                 .ok()
                 .body(events);
@@ -78,6 +80,33 @@ public class EventController {
     @GetMapping("/type_of_event")
     public ResponseEntity<?> getTypeOfEvent(@RequestParam int year, int month, int day, long id) {
         List<Map<String, Integer>> result = eventService.getEventTypeCountsPerHour(LocalDate.of(year, month, day), id);
+        return ResponseEntity
+                .ok()
+                .body(result);
+    }
+
+    @GetMapping("/average_speed_per_day")
+    public ResponseEntity<?> getAverageSpeedPerDay(@RequestParam int yearFrom, int monthFrom, int dayFrom, int yearTo,
+                                                   int monthTo, int dayTo, long id) {
+        List<Double> result = eventService.getAverageSpeedPerDay(LocalDate.of(yearFrom, monthFrom, dayFrom), id, LocalDate.of(yearTo, monthTo, dayTo));
+        return ResponseEntity
+                .ok()
+                .body(result);
+    }
+
+    @GetMapping("/type_of_car_per_day")
+    public ResponseEntity<?> getTypeOfCarPerDay(@RequestParam int yearFrom, int monthFrom, int dayFrom, int yearTo,
+                                                   int monthTo, int dayTo, long id) {
+        List<Map<String, Integer>> result = eventService.getCarTypeCountsPerDay(LocalDate.of(yearFrom, monthFrom, dayFrom), id, LocalDate.of(yearTo, monthTo, dayTo));
+        return ResponseEntity
+                .ok()
+                .body(result);
+    }
+
+    @GetMapping("/type_of_event_per_day")
+    public ResponseEntity<?> getTypeOfEventPerDay(@RequestParam int yearFrom, int monthFrom, int dayFrom, int yearTo,
+                                                int monthTo, int dayTo, long id) {
+        List<Map<String, Integer>> result = eventService.getEventTypeCountsPerDay(LocalDate.of(yearFrom, monthFrom, dayFrom), id, LocalDate.of(yearTo, monthTo, dayTo));
         return ResponseEntity
                 .ok()
                 .body(result);
