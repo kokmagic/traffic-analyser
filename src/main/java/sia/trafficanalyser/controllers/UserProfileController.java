@@ -28,8 +28,8 @@ public class UserProfileController {
     JwtUtils jwtUtils;
 
     @GetMapping("/getinfo")
-    public ResponseEntity<?> getUserProfile(@RequestBody UserProfileRequest userProfileRequest ) {
-        User user = userRepository.findByUsername(userProfileRequest.getUsername());
+    public ResponseEntity<?> getUserProfile(@RequestParam String username ) {
+        User user = userRepository.findByUsername(username);
             if (user == null) {
                 return ResponseEntity
                         .badRequest()

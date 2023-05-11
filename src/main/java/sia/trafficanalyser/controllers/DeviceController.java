@@ -64,57 +64,57 @@ public class DeviceController {
     }
 
     //отправляешь json с id type value как в профиле
-    @PostMapping("/change_parameters")
-    public ResponseEntity<?> changeParameters(@RequestBody DeviceParametersRequest deviceParametersRequest) {
-        Long id = deviceParametersRequest.getId();
-        Optional<Device> device = deviceRepository.findById(id);
-        if (device.isEmpty()) return ResponseEntity
-                .badRequest()
-                .body(new MessageResponse("Error: Device with this id not found!"));
-        Device device1 = device.get();
-        String value = deviceParametersRequest.getValue();
-        if (deviceParametersRequest.getType() != null) {
-            switch (deviceParametersRequest.getType()) {
-                case ("fov"):
-                    device1.setFov(value);
-                    break;
-                case ("focus"):
-                    device1.setFocus(value);
-                    break;
-                case ("brightness"):
-                    device1.setBrightness(value);
-                    break;
-                default:
-                    return ResponseEntity
-                            .badRequest()
-                            .body(new MessageResponse("Error: Invalid type to change!"));
-            }
-            deviceRepository.save(device1);
-            return ResponseEntity.ok(new DeviceParametersResponse(
-                    device1.getFov(),
-                    device1.getFocus(),
-                    device1.getBrightness()));
-        } else return ResponseEntity
-                .badRequest()
-                .body(new MessageResponse("Error: Invalid type to change!"));
-    }
+//    @PostMapping("/change_parameters")
+//    public ResponseEntity<?> changeParameters(@RequestBody DeviceParametersRequest deviceParametersRequest) {
+//        Long id = deviceParametersRequest.getId();
+//        Optional<Device> device = deviceRepository.findById(id);
+//        if (device.isEmpty()) return ResponseEntity
+//                .badRequest()
+//                .body(new MessageResponse("Error: Device with this id not found!"));
+//        Device device1 = device.get();
+//        String value = deviceParametersRequest.getValue();
+//        if (deviceParametersRequest.getType() != null) {
+//            switch (deviceParametersRequest.getType()) {
+//                case ("fov"):
+//                    device1.setFov(value);
+//                    break;
+//                case ("focus"):
+//                    device1.setFocus(value);
+//                    break;
+//                case ("brightness"):
+//                    device1.setBrightness(value);
+//                    break;
+//                default:
+//                    return ResponseEntity
+//                            .badRequest()
+//                            .body(new MessageResponse("Error: Invalid type to change!"));
+//            }
+//            deviceRepository.save(device1);
+//            return ResponseEntity.ok(new DeviceParametersResponse(
+//                    device1.getFov(),
+//                    device1.getFocus(),
+//                    device1.getBrightness()));
+//        } else return ResponseEntity
+//                .badRequest()
+//                .body(new MessageResponse("Error: Invalid type to change!"));
+//    }
 
-    @GetMapping("/show_parameters")
-    public ResponseEntity<?> showParameters (@RequestParam Long id, String username) { //отправялешь параметром айди камеры id и юзернейм
-        User user = userRepository.findByUsername(username);
-        Optional<Device> device = deviceRepository.findById(id);
-        if (device.isEmpty()) return ResponseEntity
-                .badRequest()
-                .body(new MessageResponse("Error: Device with this id not found!"));
-        Device device1 = device.get();
-        if (!user.getDevices().contains(device1) && !userDetailsService.isAdmin(user)) return ResponseEntity
-                .badRequest()
-                .body(new MessageResponse("Error: this device doesn't belong to this user!"));
-        return ResponseEntity.ok(new DeviceParametersResponse(
-                device1.getFov(),
-                device1.getFocus(),
-                device1.getBrightness()));
-    }
+//    @GetMapping("/show_parameters")
+//    public ResponseEntity<?> showParameters (@RequestParam Long id, String username) { //отправялешь параметром айди камеры id и юзернейм
+//        User user = userRepository.findByUsername(username);
+//        Optional<Device> device = deviceRepository.findById(id);
+//        if (device.isEmpty()) return ResponseEntity
+//                .badRequest()
+//                .body(new MessageResponse("Error: Device with this id not found!"));
+//        Device device1 = device.get();
+//        if (!user.getDevices().contains(device1) && !userDetailsService.isAdmin(user)) return ResponseEntity
+//                .badRequest()
+//                .body(new MessageResponse("Error: this device doesn't belong to this user!"));
+//        return ResponseEntity.ok(new DeviceParametersResponse(
+//                device1.getFov(),
+//                device1.getFocus(),
+//                device1.getBrightness()));
+//    }
 
     @GetMapping("/show_all")
     public ResponseEntity<?> showAllDevices (@RequestParam String username) {
