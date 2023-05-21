@@ -55,6 +55,9 @@ public class EventController {
                 break;
             case ("2"):
                 result = eventService.filterByBoth(typeOfCar, typeOfEvent, events);
+                break;
+            case ("3"):
+                result = events;
         }
         return ResponseEntity
                 .ok()
@@ -80,6 +83,10 @@ public class EventController {
                 break;
             case ("2"):
                 result = eventService.filterByBoth(typeOfCar, typeOfEvent, events);
+                break;
+            case ("3"):
+                result = events;
+                break;
         }
         servletResponse.setContentType("text/csv");
         servletResponse.addHeader("Content-Disposition","attachment; filename=\"events.csv\"");
