@@ -9,8 +9,11 @@ import sia.trafficanalyser.repository.EventRepository;
 import sia.trafficanalyser.repository.UserRepository;
 import sia.trafficanalyser.repository.models.Device;
 import sia.trafficanalyser.repository.models.Event;
+import sia.trafficanalyser.security.services.CsvExportService;
 import sia.trafficanalyser.security.services.EventService;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -29,6 +32,9 @@ public class EventController {
 
     @Autowired
     EventService eventService;
+
+    @Autowired
+    CsvExportService csvExportService;
 
     @GetMapping("/show_events")
     public ResponseEntity<?> showEvents(@RequestParam Long id, String typeOfFiltration, @RequestParam(value = "typeOfCar", required = false) String typeOfCar,
@@ -53,6 +59,32 @@ public class EventController {
         return ResponseEntity
                 .ok()
                 .body(result);
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<?> exportToCsv(@RequestParam Long id, String typeOfFiltration, @RequestParam(value = "typeOfCar", required = false) String typeOfCar,
+                                         @RequestParam(value = "typeOfEvent", required = false) String typeOfEvent, HttpServletResponse servletResponse) throws IOException {
+        Optional<Device> device = deviceRepository.findById(id);
+        if (device.isEmpty()) return ResponseEntity
+                .badRequest()
+                .body(new MessageResponse("Error: Device with this id not found!"));
+        Device device1 = device.get();
+        Set<Event> events = device1.getEvents();
+        Set<Event> result = new HashSet<>();
+        switch (typeOfFiltration) {
+            case ("0"):
+                result = eventService.filterByEvent(typeOfEvent, events);
+                break;
+            case ("1"):
+                result = eventService.filterByCar(typeOfCar, events);
+                break;
+            case ("2"):
+                result = eventService.filterByBoth(typeOfCar, typeOfEvent, events);
+        }
+        servletResponse.setContentType("text/csv");
+        servletResponse.addHeader("Content-Disposition","attachment; filename=\"events.csv\"");
+        csvExportService.writeEventsToCsv(servletResponse.getWriter(), result);
+        return ResponseEntity.ok(new MessageResponse("Events exported successfully!"));
     }
 
     @GetMapping("/average_speed")
