@@ -175,4 +175,39 @@ public class EventService {
         return result;
     }
 
+    public Map<String, Double> getAverageSpeedByTypeOfCar(LocalDate dayFrom, Long deviceId, LocalDate dayTo) {
+        Map<String, Double> result = new HashMap<>();
+        LocalDateTime start = LocalDateTime.of(dayFrom, LocalTime.of(0, 0));
+        LocalDateTime end = LocalDateTime.of(dayTo, LocalTime.of(23, 59));
+        for (int i = 0; i <= 3; i++) {
+            TypedQuery<Double> query = entityManager.createQuery(
+                    "SELECT COALESCE(AVG(e.speed), 0.0) FROM Device d JOIN d.events e WHERE d.id = :deviceId AND e.time BETWEEN :start AND :end AND e.typeOfCar = :typeOfCar", Double.class);
+            query.setParameter("deviceId", deviceId);
+            query.setParameter("start", start);
+            query.setParameter("end", end);
+            query.setParameter("typeOfCar", Integer.toString(i));
+            Double averageSpeed = query.getSingleResult();
+            result.put(Integer.toString(i), averageSpeed);
+        }
+        return result;
+    }
+
+    public Map<String, Double> getAverageSpeedByTypeOfEvent(LocalDate dayFrom, Long deviceId, LocalDate dayTo) {
+        Map<String, Double> result = new HashMap<>();
+        LocalDateTime start = LocalDateTime.of(dayFrom, LocalTime.of(0, 0));
+        LocalDateTime end = LocalDateTime.of(dayTo, LocalTime.of(23, 59));
+        for (int i = 0; i <= 2; i++) {
+            TypedQuery<Double> query = entityManager.createQuery(
+                    "SELECT COALESCE(AVG(e.speed), 0.0) FROM Device d JOIN d.events e WHERE d.id = :deviceId AND e.time BETWEEN :start AND :end AND e.typeOfEvent = :typeOfEvent", Double.class);
+            query.setParameter("deviceId", deviceId);
+            query.setParameter("start", start);
+            query.setParameter("end", end);
+            query.setParameter("typeOfEvent", Integer.toString(i));
+            Double averageSpeed = query.getSingleResult();
+            result.put(Integer.toString(i), averageSpeed);
+        }
+        return result;
+    }
+
+
 }

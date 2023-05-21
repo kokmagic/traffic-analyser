@@ -2,7 +2,6 @@ package sia.trafficanalyser.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import sia.trafficanalyser.payload.response.MessageResponse;
@@ -14,13 +13,10 @@ import sia.trafficanalyser.repository.models.Event;
 import sia.trafficanalyser.security.services.CsvExportService;
 import sia.trafficanalyser.security.services.EventService;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -99,7 +95,7 @@ public class EventController {
         try {
             csvFile = File.createTempFile("export", ".csv");
             try (FileWriter writer = new FileWriter(csvFile)) {
-                csvExportService.writeEventsToCsv(writer, events);
+                csvExportService.writeEventsToCsv(writer, result);
             }
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -165,6 +161,24 @@ public class EventController {
     public ResponseEntity<?> getTypeOfEventPerDay(@RequestParam int yearFrom, int monthFrom, int dayFrom, int yearTo,
                                                 int monthTo, int dayTo, long id) {
         List<Map<String, Integer>> result = eventService.getEventTypeCountsPerDay(LocalDate.of(yearFrom, monthFrom, dayFrom), id, LocalDate.of(yearTo, monthTo, dayTo));
+        return ResponseEntity
+                .ok()
+                .body(result);
+    }
+
+    @GetMapping("/average_speed_by_type_of_car")
+    public ResponseEntity<?> getAverageSpeedByTypeOfCar(@RequestParam int yearFrom, int monthFrom, int dayFrom, int yearTo,
+                                                        int monthTo, int dayTo, long id){
+        Map<String, Double> result = eventService.getAverageSpeedByTypeOfCar(LocalDate.of(yearFrom, monthFrom, dayFrom), id, LocalDate.of(yearTo, monthTo, dayTo));
+        return ResponseEntity
+                .ok()
+                .body(result);
+    }
+
+    @GetMapping("/average_speed_by_type_of_event")
+    public ResponseEntity<?> getAverageSpeedByTypeOfEvent(@RequestParam int yearFrom, int monthFrom, int dayFrom, int yearTo,
+                                                        int monthTo, int dayTo, long id){
+        Map<String, Double> result = eventService.getAverageSpeedByTypeOfEvent(LocalDate.of(yearFrom, monthFrom, dayFrom), id, LocalDate.of(yearTo, monthTo, dayTo));
         return ResponseEntity
                 .ok()
                 .body(result);
