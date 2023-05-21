@@ -45,9 +45,10 @@ public class Device {
 
     }
 
-    public Device (String key, String name, String mode, String signal, String view){
+    public Device (String key, String name, String mode, String signal, String view, String address){
         this.key = key;
         this.name = name;
+        this.address = address;
 //        this.mode = mode;
 //        this.signal = signal;
 //        this.view = view;

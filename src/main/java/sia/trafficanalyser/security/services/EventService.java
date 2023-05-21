@@ -37,6 +37,15 @@ public class EventService {
         return result;
     }
 
+    public Set<Event> filterByBoth (String typeOfCar, String typeOfEvent, Set<Event> events) {
+        Set<Event> result = new HashSet<>();
+        for (Event event: events) {
+            if (Objects.equals(event.getTypeOfEvent(), typeOfEvent) && Objects.equals(event.getTypeOfCar(), typeOfCar))
+                result.add(event);
+        }
+        return result;
+    }
+
     @PersistenceContext
     private EntityManager entityManager;
 

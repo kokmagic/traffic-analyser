@@ -12,10 +12,7 @@ import sia.trafficanalyser.repository.models.Event;
 import sia.trafficanalyser.security.services.EventService;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -34,28 +31,25 @@ public class EventController {
     EventService eventService;
 
     @GetMapping("/show_events")
-    public ResponseEntity<?> showEvents(@RequestParam Long id) {
+    public ResponseEntity<?> showEvents(@RequestParam Long id, String typeOfFiltration, @RequestParam(value = "typeOfCar", required = false) String typeOfCar,
+                                        @RequestParam(value = "typeOfEvent", required = false) String typeOfEvent) {
         Optional<Device> device = deviceRepository.findById(id);
         if (device.isEmpty()) return ResponseEntity
                 .badRequest()
                 .body(new MessageResponse("Error: Device with this id not found!"));
         Device device1 = device.get();
         Set<Event> events = device1.getEvents();
-        return ResponseEntity
-                .ok()
-                .body(events);
-    }
-
-    @GetMapping("/filter")
-    public ResponseEntity<?> filterEvents(@RequestParam int filterType, String type, String key) {
-        Device device = deviceRepository.findByKey(key);
-        if (device == null) return ResponseEntity
-                .badRequest()
-                .body(new MessageResponse("Error: Device with this key not found!"));
-        Set<Event> events = device.getEvents();
-        Set<Event> result;
-        if (filterType == 0) result = eventService.filterByEvent(type, events);
-        else result = eventService.filterByCar(type, events);
+        Set<Event> result = new HashSet<>();
+        switch (typeOfFiltration) {
+            case ("0"):
+                result = eventService.filterByEvent(typeOfEvent, events);
+                break;
+            case ("1"):
+                result = eventService.filterByCar(typeOfCar, events);
+                break;
+            case ("2"):
+                result = eventService.filterByBoth(typeOfCar, typeOfEvent, events);
+        }
         return ResponseEntity
                 .ok()
                 .body(result);
