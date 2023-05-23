@@ -8,6 +8,7 @@ import sia.trafficanalyser.repository.models.Event;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -209,5 +210,49 @@ public class EventService {
         return result;
     }
 
+    public List<String> getPeakHoursForDay(LocalDate date, long id) {
+        String jpql = "SELECT FUNCTION('HOUR', e.time), COUNT(e) " +
+                "FROM Device d JOIN d.events e WHERE d.id = :deviceId " +
+                "AND e.time >= :startDate AND e.time <= :endDate " +
+                "GROUP BY FUNCTION('HOUR', e.time) " +
+                "ORDER BY COUNT(e) DESC";
 
+        LocalDateTime startDate = LocalDateTime.of(date, LocalTime.of(0, 0));
+        LocalDateTime endDate = LocalDateTime.of(date, LocalTime.of(23, 59));
+        Query query = entityManager.createQuery(jpql);
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
+        query.setParameter("deviceId", id);
+        query.setMaxResults(1);
+
+        return query.getResultList();
+    }
+
+    public List<Object[]> getPeakHoursForPeriod(LocalDate startDate, LocalDate endDate, long id) {
+        String jpql = "SELECT FUNCTION('DAY', e.time), FUNCTION('HOUR', e.time), COUNT(e) " +
+                "FROM Device d JOIN d.events e WHERE d.id = :deviceId " +
+                "AND e.time >= :startDate AND e.time < :endDate " +
+                "GROUP BY FUNCTION('DAY', e.time), FUNCTION('HOUR', e.time) " +
+                "ORDER BY COUNT(e) DESC";
+
+        LocalDateTime start = LocalDateTime.of(startDate, LocalTime.of(0, 0));
+        LocalDateTime end = LocalDateTime.of(endDate, LocalTime.of(0, 0));
+        LocalDateTime endDateAdjusted = end.plusDays(1);
+        Query query = entityManager.createQuery(jpql);
+        query.setParameter("startDate", start);
+        query.setParameter("endDate", endDateAdjusted);
+        query.setParameter("deviceId", id);
+        query.setMaxResults(1);
+        return query.getResultList();
+    }
+
+    public Double getAverageSpeedInPeak(LocalDateTime date, long id) {
+        LocalDateTime endDate = date.plusHours(1);
+        TypedQuery<Double> query = entityManager.createQuery(
+                "SELECT COALESCE(AVG(e.speed), 0.0) FROM Device d JOIN d.events e WHERE d.id = :deviceId AND e.time BETWEEN :date AND :endDate", Double.class);
+        query.setParameter("deviceId", id);
+        query.setParameter("date", date);
+        query.setParameter("endDate", endDate);
+        return query.getSingleResult();
+    }
 }

@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -179,6 +180,32 @@ public class EventController {
     public ResponseEntity<?> getAverageSpeedByTypeOfEvent(@RequestParam int yearFrom, int monthFrom, int dayFrom, int yearTo,
                                                         int monthTo, int dayTo, long id){
         Map<String, Double> result = eventService.getAverageSpeedByTypeOfEvent(LocalDate.of(yearFrom, monthFrom, dayFrom), id, LocalDate.of(yearTo, monthTo, dayTo));
+        return ResponseEntity
+                .ok()
+                .body(result);
+    }
+
+    @GetMapping("/peak_hours_for_day")
+    public ResponseEntity<?> getPeakHoursForDay(@RequestParam int year, int month, int day, long id) {
+        List<?> result = eventService.getPeakHoursForDay(LocalDate.of(year, month, day), id);
+        return ResponseEntity
+                .ok()
+                .body(result);
+    }
+
+    @GetMapping("/peak_hours_for_period")
+    public ResponseEntity<?> getPeakHoursForPeriod(@RequestParam int yearFrom, int monthFrom, int dayFrom, int yearTo,
+                                                   int monthTo, int dayTo, long id) {
+        List<Object[]> result = eventService.getPeakHoursForPeriod(LocalDate.of(yearFrom, monthFrom, dayFrom), LocalDate.of(yearTo, monthTo, dayTo), id);
+        return ResponseEntity
+                .ok()
+                .body(result);
+    }
+
+    @GetMapping("/average_speed_for_peak_hour")
+    public ResponseEntity<?> getAverageSpeedInPeakHour(@RequestParam int year, int month, int day, int hour, long id) {
+        LocalDateTime date = LocalDateTime.of(year, month, day, hour, 0);
+        Double result = eventService.getAverageSpeedInPeak(date, id);
         return ResponseEntity
                 .ok()
                 .body(result);
