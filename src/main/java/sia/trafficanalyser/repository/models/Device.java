@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -23,17 +24,6 @@ public class Device {
 
     private String address;
 
-//    private String mode;
-//
-//    private String signal;
-//
-//    private String view;
-//
-//    private String focus;
-//
-//    private String fov;
-//
-//    private String brightness;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "device_events",
@@ -45,16 +35,10 @@ public class Device {
 
     }
 
-    public Device (String key, String name, String mode, String signal, String view, String address){
+    public Device (String key, String name, String address){
         this.key = key;
         this.name = name;
         this.address = address;
-//        this.mode = mode;
-//        this.signal = signal;
-//        this.view = view;
-//        this.brightness = null;
-//        this.fov = null;
-//        this.focus = null;
     }
 
     public Set<Event> getEvents() {
@@ -63,5 +47,18 @@ public class Device {
 
     public void setEvents(Set<Event> events) {
         this.events = events;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Device device = (Device) o;
+        return Objects.equals(id, device.id) && Objects.equals(name, device.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

@@ -187,7 +187,7 @@ public class EventController {
 
     @GetMapping("/peak_hours_for_day")
     public ResponseEntity<?> getPeakHoursForDay(@RequestParam int year, int month, int day, long id) {
-        List<?> result = eventService.getPeakHoursForDay(LocalDate.of(year, month, day), id);
+        List<String> result = eventService.getPeakHoursForDay(LocalDate.of(year, month, day), id);
         return ResponseEntity
                 .ok()
                 .body(result);
